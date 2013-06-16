@@ -7,6 +7,8 @@ var callbackUrl = "http://localhost:3000/oauth_callback";
 
 // home page
 exports.list = function(req, res) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
     if (req.session.oauthAccessToken) {
         var client = new Evernote.Client({
             consumerKey: config.API_CONSUMER_KEY,
@@ -28,6 +30,8 @@ exports.list = function(req, res) {
 }
 
 exports.post_note = function(req, res) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
     if (req.session.oauthAccessToken) {
         var title = req.param("title");
         var deadline = req.param("deadline");
@@ -93,6 +97,8 @@ exports.post_note = function(req, res) {
 };
 
 exports.index = function(req, res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
   if(req.session.oauthAccessToken) {
     var token = req.session.oauthAccessToken;
     var client = new Evernote.Client({
@@ -111,6 +117,8 @@ exports.index = function(req, res) {
 
 // OAuth
 exports.oauth = function(req, res) {
+   res.header("Access-Control-Allow-Origin", "*");
+   res.header("Access-Control-Allow-Headers", "X-Requested-With");
    var client = new Evernote.Client({
       consumerKey: config.API_CONSUMER_KEY,
       consumerSecret: config.API_CONSUMER_SECRET,
@@ -137,6 +145,8 @@ exports.oauth = function(req, res) {
 
 // OAuth callback
 exports.oauth_callback = function(req, res) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
     var client = new Evernote.Client({
         consumerKey: config.API_CONSUMER_KEY,
         consumerSecret: config.API_CONSUMER_SECRET,
@@ -169,6 +179,8 @@ exports.oauth_callback = function(req, res) {
 
 // Clear session
 exports.clear = function(req, res) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "X-Requested-With");
   req.session.destroy();
   res.redirect('/');
 };
