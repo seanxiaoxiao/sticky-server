@@ -5,14 +5,11 @@ var crypto = require('crypto');
 var config = require('../config.json');
 var callbackUrl = "http://localhost:3000/oauth_callback";
 
-
-
 // home page
 exports.post_note = function(req, res) {
-
     if (req.session.oauthAccessToken) {
-	    var title = req.title;
-        var deadline = req.deadline;
+	    var title = req.param("title");
+        var deadline = req.param("deadline");
 		var url = req.url;
         var client = new Evernote.Client({
             consumerKey: config.API_CONSUMER_KEY,
