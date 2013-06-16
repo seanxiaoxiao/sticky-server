@@ -6,9 +6,30 @@ var config = require('../config.json');
 var callbackUrl = "http://localhost:3000/oauth_callback";
 
 // home page
+exports.list = function(req, res) {
+    if (req.session.oauthAccessToken) {
+        var client = new Evernote.Client({
+            consumerKey: config.API_CONSUMER_KEY,
+            consumerSecret: config.API_CONSUMER_SECRET,
+            sandbox: config.SANDBOX,
+            token: req.session.oauthAccessToken
+        });
+        var noteStore = client.getNoteStore();
+        note = noteStore.getNote(req.session.oauthAccessToken, "a5919373-814e-420e-bb83-9d9a1b5bc880", false, true, true, true, function(noteWithResource) {
+            console.log(noteWithResource);
+            var coupon = noteWithResource.resources[0];
+            var res = noteStore.getResourceRecognition(req.session.oauthAccessToken, coupon.guid, function(buffer) {
+                console.log(buffer);
+            });
+            console.log(res);
+        });
+    }
+    res.end();
+}
+
 exports.post_note = function(req, res) {
     if (req.session.oauthAccessToken) {
-	    var title = req.param("title");
+        var title = req.param("title");
         var deadline = req.param("deadline");
 		var url = req.url;
         var client = new Evernote.Client({
@@ -18,9 +39,7 @@ exports.post_note = function(req, res) {
             token: req.session.oauthAccessToken
         });
 
-        var userStore = client.getUserStore();
         var noteStore = client.getNoteStore();
-
 
         var image = fs.readFileSync('enlogo.png');
         var hash = image.toString('base64');
@@ -33,7 +52,10 @@ exports.post_note = function(req, res) {
 
         var note = new Evernote.Note();
         note.title = title;
-        var image = fs.readFileSync('enlogo.png');
+        note.attributes = new Evernote.NoteAttributes();
+        note.attributes.reminderOrder = new Date().getTime();
+        note.attributes.reminderTime = new Date().getTime() + 3600000 * 24 * 30;
+        var image = fs.readFileSync('jackinthebox-coupon.jpg');
         var hash = image.toString('base64');
         var data = new Evernote.Data();
         data.size = image.length;
@@ -54,12 +76,16 @@ exports.post_note = function(req, res) {
         note.content += '<en-note>Here is the Evernote logo:<br/>';
         note.content += '<en-media type="image/png" hash="' + hashHex + '"/>';
         note.content += '</en-note>';
+
 		noteStore.createNote(note, function(createdNote) {
-            console.log(createdNote);
-            console.log();
- 			console.log("Creating a new note in the default notebook"); 
- 			console.log();
-			console.log("Successfully created a new note with GUID: " + createdNote.guid);
+            var guid = createdNote.guid;
+            note = noteStore.getNote(req.session.oauthAccessToken, guid, false, true, true, true, function(noteWithResource) {
+                var coupon = noteWithResource.resources[0];
+                var res = noteStore.getResourceRecognition(req.session.oauthAccessToken, coupon.guid, function(buffer) {
+                   console.log(buffer);
+                });
+                console.log(res);
+            });
         });
 		
     }
