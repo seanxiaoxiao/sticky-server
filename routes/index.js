@@ -11,6 +11,10 @@ var callbackUrl = "http://localhost:3000/oauth_callback";
 exports.post_note = function(req, res) {
 
     if (req.session.oauthAccessToken) {
+	    var title = req.title;
+//        var coupon = req.body.coupon;
+        var deadline = req.deadline;
+		var url = req.url;
         var client = new Evernote.Client({
             consumerKey: config.API_CONSUMER_KEY,
             consumerSecret: config.API_CONSUMER_SECRET,
@@ -30,7 +34,7 @@ exports.post_note = function(req, res) {
 // To create a new note, simply create a new Note object and fill in
     // attributes such as the note's title.
         var note = new Evernote.Note();
-         note.title = "Test note from EDAMTest.js";
+        note.title = title;
 //    // To include an attachment such as an image in a note, first create a Resource
 //    // for the attachment. At a minimum, the Resource contains the binary attachment
 //    // data, an MD5 hash of the binary data, and the attachment MIME type.
