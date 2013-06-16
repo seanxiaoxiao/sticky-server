@@ -32,8 +32,6 @@ app.configure('development', function(){
 });
 
 // Routes
-app.all('/', function(req, res, next) {
-});
 
 app.get('/', routes.index);
 app.get('/oauth', routes.oauth);
